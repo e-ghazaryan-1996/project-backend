@@ -1,7 +1,16 @@
 import express from 'express';
 import sequelize from './config/index.js';
+import helmet from 'helmet';
+import limiter from './config/rate-limit.js';
+import errorHandler from './middlewares/error-middleware.js';
 
 const app = express();
+
+app.use(helmet());
+app.use(limiter);
+
+
+app.use(errorHandler);
 
 sequelize
   .authenticate()

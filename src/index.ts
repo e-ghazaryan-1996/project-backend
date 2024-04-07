@@ -5,6 +5,8 @@ import limiter from './config/rate-limit.js';
 import errorHandler from './middlewares/error-middleware.js';
 import corsOptions from './config/cors.js';
 import cors from 'cors';
+import morganMiddleware from './middlewares/morgan-middleware.js';
+import logger from './utils/logger.js';
 
 const app = express();
 
@@ -13,16 +15,17 @@ app.use(limiter);
 app.use(cors(corsOptions));
 
 app.use(errorHandler);
+app.use(morganMiddleware);
 
 sequelize
   .authenticate()
   .then(() => {
-    console.log('Database connection has been established successfully.');
+    logger.info('Database connection has been established successfully.');
   })
   .catch((err) => {
-    console.error('Unable to connect to the database:', err);
+    logger.error('Unable to connect to the database:');
   });
 
 app.listen(process.env.PORT, () => {
-  console.log('Server is running on port 3000');
+  logger.info(`Server is running on port ${process.env.PORT}`);
 });
